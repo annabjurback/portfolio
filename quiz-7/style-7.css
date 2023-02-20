@@ -1,19 +1,17 @@
-html {
+* {
     font-family: "Happy Monkey";
-     /* sans-serif; */
-    text-align: center;
 }
+
 
 h1 {
     display: inline-block;
-    /* border: 1rem dotted blueviolet; */
     text-transform: uppercase;
     padding: 0.8rem;
     font-size: 3rem;
     margin-bottom: 1rem;
 }
 
-section {
+body {
     max-width: 45rem;
     margin-left: auto;
     margin-right: auto;
@@ -21,7 +19,6 @@ section {
 
 p {
     font-size: 1.5rem;
-    font-style: italic;
 }
 
 h2 {
@@ -30,17 +27,6 @@ h2 {
     text-transform: uppercase;
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    /* border: 0.3rem dotted blueviolet; */
-}
-
-h3 {
-    text-transform: uppercase;
-    margin-top: 2rem;
-    margin-bottom: 0.5rem;
-}
-
-.quote {
-    font-style: italic;
 }
 
 ol {
@@ -65,15 +51,13 @@ li {
     display: block;
     margin: 0.4rem;
     color: white;
-    font-weight: bold;
 }
 
-label:hover {
+label.clickable:hover {
     background-color: rgb(102, 102, 102);
 }
 
-
-label {
+label.clickable {
     display: block;
     cursor: pointer;
     padding: 1em;
@@ -85,20 +69,82 @@ input {
     display: none;
 }
 
-input:checked + label {
-    background-color: rgb(125, 0, 0);
+input:checked+label.clickable {
+    background-color: red;
+    /* background-color: rgb(125, 0, 0); */
 }
 
-.correct input:checked + label {
+.correct input:checked+label.clickable {
     background-color: rgb(18, 153, 18);
 }
 
-.correct.not-chosen > label{
-    background-color:rgb(0, 78, 0);
+.correct.not-chosen>label {
+    /* background-color:rgb(0, 78, 0); */
+    background-color: rgb(18, 153, 18);
 }
 
 button {
-    font-size: 2rem;
+    font-size: 1.2rem;
     font-weight: bold;
     padding: 0.25em;
+    /* border-radius: 1em; */
+
+}
+
+/* label+select {
+    display: inline;
+} */
+
+form {
+    display: grid;
+    grid-template:
+        "a c"
+        "b c"
+        "d d" / auto auto;
+}
+
+/* form div {
+    border: 1px solid black;
+    margin: 1px;
+} */
+
+/* all labels inside an element with an id ending with section */
+[id$="section"] label {
+    font-weight: bold;
+}
+
+#categories-section {
+    grid-area: a;
+    padding: 10px 0 10px 0;
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: 30% 70%;
+}
+
+#difficulty-section {
+    grid-area: b;
+    padding: 10px 0 10px 0;
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: 30% 70%;
+}
+
+#submit-section {
+    grid-area: c;
+    /* display: flex; */
+    display: grid;
+    padding: 10px 0 10px 5px;
+}
+
+/* #submit-section button {
+    align-self: center;
+    align-self: right;
+    justify-self: right;
+    justify-content: end;
+
+}  */
+
+#questions {
+    grid-area: d;
+    text-align: center;
 }

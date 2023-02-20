@@ -3,6 +3,7 @@ let json;
 
 // Get the form element from HTML.
 const form = document.querySelector("form");
+const questionContainer = form.querySelector('#questions');
 
 // Get the option template from the HTML.
 const optionTemplate = document.getElementById("option-template");
@@ -17,14 +18,39 @@ questionTemplate.remove();
 questionTemplate.removeAttribute('id');
 
 // States to maintain for each click
-let score = 0;
-let guesses = 0;
+let score;
+let guesses;
+
+form.onsubmit = event => {
+    event.preventDefault();
+    score = 0;
+    guesses = 0;
+    empty(form.querySelector('#questions'));
+    let category = form.categorySelection.value;
+    let difficulty = form.difficultySelection.value;
+    start(category, difficulty);
+};
+
+function empty(element) {
+    element.replaceChildren();
+}
 
 // Call open trivia db API.
-async function collectQuestions() {
-    response = await fetch('https://opentdb.com/api.php?amount=10&category=17&difficulty=medium&type=multiple');
+async function collectQuestions(category, difficulty) {
+    let url = 'https://opentdb.com/api.php?';
+    let queryString = new URLSearchParams({
+        amount: 10,
+    });
+    if (difficulty !== 'any') {
+        queryString.append('difficulty', difficulty);
+    }
+    if (category !== 'any') {
+        queryString.append('category', category);
+    }
+    url += queryString;
+    response = await fetch(url);
     json = await response.json();
-    let b = 7
+    let b = 7;
 }
 
 // Get random integer between 0 and max.
@@ -40,9 +66,8 @@ function decode(encoded) {
     return decodedString;
 }
 
-async function start() {
-    await collectQuestions();
-
+async function start(category, difficulty) {
+    await collectQuestions(category, difficulty);
 
     // For each question in the json:
     json.results.forEach((result, resultIndex) => {
@@ -63,21 +88,22 @@ async function start() {
         });
 
         // Create random integer.
-        let correctAnswerIndex = getRandomInt(4);
+        let correctAnswerIndex = getRandomInt(result.type === "boolean" ? 2 : 4);
         // Add correct answer to array at random integer index position
         allOptions.splice(correctAnswerIndex, 0, decode(result.correct_answer));
 
         // For each option in the array: 
         allOptions.forEach((option, optionIndex) => {
             const optionElement = createOptionElement(option, optionIndex, resultIndex);
+            // Append optionElement to optionList element.
             optionList.appendChild(optionElement);
             // Add "correct" class to correct answer
             if (optionIndex === correctAnswerIndex) {
                 optionElement.classList.add("correct");
             }
         });
-        // Append optionList to current questionElement
-        form.appendChild(questionElement);
+        // Append questionElement to form
+        questionContainer.appendChild(questionElement);
 
         // make use of event propagation (or "bubbling"): whenever a
         // "change" event occurs anywhere in the element (including descendants)
@@ -86,26 +112,21 @@ async function start() {
             if (guesses === json.results.length) {
                 document.getElementById("score").hidden = false;
                 document.getElementById("result-score").textContent = score + " / " + json.results.length;
+                // alert("Final score: " + score + " / " + json.results.length);
             }
         };
     });
-
-    // form.onsubmit = event => {
-    //     event.preventDefault();
-    // };
 }
 
 function createOptionElement(option, optionIndex, resultIndex) {
     // Clone option element.
     const optionElement = optionTemplate.cloneNode(true);
-
     // Get optionInput element.
     const optionInput = optionElement.querySelector("input");
     // Get optionLabel element.
     const optionLabel = optionElement.querySelector("label");
     // Set text content of label to current option.
     optionLabel.textContent = decode(option);
-    // Append element to optionList element.
 
     // make sure inputs and labels have IDs and names
     const questionName = "question-" + resultIndex;
@@ -129,5 +150,3 @@ function createOptionElement(option, optionIndex, resultIndex) {
 
     return optionElement;
 }
-
-start();
