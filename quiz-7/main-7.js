@@ -111,6 +111,7 @@ async function start(category, difficulty) {
             Array.from(questionElement.querySelectorAll("input")).forEach(input => input.disabled = true); // disable further clicking, once an option has been chosen
             if (guesses === json.results.length) {
                 document.getElementById("score").hidden = false;
+                document.getElementById("score").scrollIntoView({behavior: "smooth"});
                 document.getElementById("result-score").textContent = score + " / " + json.results.length;
                 // alert("Final score: " + score + " / " + json.results.length);
             }
